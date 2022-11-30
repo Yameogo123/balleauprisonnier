@@ -1,8 +1,12 @@
-package fr.icom.info.m1.balleauprisonnier_mvn;
+package fr.icom.info.m1.balleauprisonnier_mvn.model;
 
 import javafx.scene.canvas.GraphicsContext;
+import lombok.Getter;
+import lombok.Setter;
 
-public class Machine extends Player{
+@Getter
+@Setter
+public class Machine extends Player {
 
 
     /**
@@ -15,7 +19,7 @@ public class Machine extends Player{
      * @param side
      * @param step
      */
-    Machine(GraphicsContext gc, String color, int xInit, int yInit, String side, double step) {
+    public Machine(GraphicsContext gc, String color, int xInit, int yInit, String side, double step) {
         super(gc, color, xInit, yInit, side, step);
     }
 

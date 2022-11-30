@@ -1,10 +1,14 @@
-package fr.icom.info.m1.balleauprisonnier_mvn;
+package fr.icom.info.m1.balleauprisonnier_mvn.view;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.MachineController;
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.PlayerController;
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.ProjectileController;
+import fr.icom.info.m1.balleauprisonnier_mvn.model.Machine;
+import fr.icom.info.m1.balleauprisonnier_mvn.model.Player;
+import fr.icom.info.m1.balleauprisonnier_mvn.model.Projectile;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -20,15 +24,19 @@ import javafx.scene.paint.Color;
 public class Field extends Canvas {
 	
 	/** Joueurs */
-	List<Player> joueurs = new ArrayList<>();
-	List<Machine> machines= new ArrayList<>();
 
-	List<Projectile> projectiles= new ArrayList<>();
+	private List<Machine> machines;
+	private List<Player> joueurs;
+	private List<Projectile> projectiles= new ArrayList<>();
 	/** Couleurs possibles */
 	String[] colorMap = new String[] {"blue", "green", "orange", "purple", "yellow"};
 	/** Tableau traçant les evenements */
     ArrayList<String> input = new ArrayList<String>();
-    
+
+
+	private PlayerController playerController= new PlayerController();
+	private MachineController machineController= new MachineController();
+	private ProjectileController projectileController= new ProjectileController();
 
     final GraphicsContext gc;
     final int width;
@@ -54,17 +62,13 @@ public class Field extends Canvas {
         
         /** On initialise le terrain de jeu */
 		//les joueurs
-    	Player joueur1 = new Player(gc, colorMap[0], w/2, h-50, "bottom", 1);
-		joueurs.add(joueur1);
-    	joueur1.display();
+		this.joueurs= playerController.initJoueur(1, gc, colorMap[0], width, height);
+		playerController.displayAll();
 
 		//la machine
-		Machine m1= new Machine(gc, colorMap[1], w/2, 20, "top", 1);
-		Machine m2= new Machine(gc, colorMap[1], w/2+ 100, 20, "top", 1);
-		Machine m3= new Machine(gc, colorMap[1], w/2+ 200, 20, "top", 1);
-		machines.addAll(Arrays.asList(m1, m2, m3));
-    	//joueurs[1] = new Player(gc, colorMap[1], w/2, 20, "top", 2);
-    	//joueurs[1].display();
+		this.machines= machineController.initJoueur(4, gc, colorMap[1], width-300, 20);
+		this.machineController.displayAll();
+
 
 
 	    /** 
@@ -114,57 +118,19 @@ public class Field extends Canvas {
 	            // On nettoie le canvas a chaque frame
 	            gc.setFill( Color.LIGHTGRAY);
 	            gc.fillRect(0, 0, width, height);
-	        	
-	            // Deplacement et affichage des joueurs
-	        	for (int i = 0; i < joueurs.size(); i++)
-	    	    {
-	        		if (i==0 && input.contains("LEFT"))
-	        		{
-	        			joueurs.get(i).moveLeft();
-	        		} 
-	        		if (i==0 && input.contains("RIGHT")) 
-	        		{
-	        			joueurs.get(i).moveRight();
-	        		}
-	        		if (i==0 && input.contains("UP"))
-	        		{
-	        			joueurs.get(i).turnLeft();
-	        		} 
-	        		if (i==0 && input.contains("DOWN")) 
-	        		{
-	        			joueurs.get(i).turnRight();
-	        		}
-	        		if (i==1 && input.contains("A"))
-	        		{
-	        			joueurs.get(i).moveLeft();
-	        		} 
-	        		if (i==1 && input.contains("D")) 
-	        		{
-	        			joueurs.get(i).moveRight();
-	        		}
-	        		if (i==1 && input.contains("W"))
-	        		{
-	        			joueurs.get(i).turnLeft();
-	        		} 
-	        		if (i==1 && input.contains("S")) 
-	        		{
-	        			joueurs.get(i).turnRight();
-	        		}
-	        		if (i==1 && input.contains("SPACE")){
-	        			joueurs.get(i).shoot();
-					}
-					if (i==0 && input.contains("SHIFT")){
-						joueurs.get(i).shoot();
-					}
-	        		joueurs.get(i).display();
-	    	    }
 
-				for(Machine m : machines){
-					m.display();
+	            playerController.controlKeyboard(input, gc, projectiles);
+				machineController.displayAll();
+				machineController.randomMove();
+				try {
+					projectileController.move(projectiles);
+					projectileController.degat(projectiles, machines);
+				} catch (Exception e){
+
 				}
+
 	    	}
-	     }.start(); // On lance la boucle de rafraichissement 
-	     
+		}.start(); // On lance la boucle de rafraichissement
 	}
 
 	public List<Player> getJoueurs() {
@@ -174,4 +140,5 @@ public class Field extends Canvas {
 	public List<Machine> getMachines() {
 		return machines;
 	}
+
 }

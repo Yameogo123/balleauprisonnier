@@ -1,4 +1,4 @@
-package fr.icom.info.m1.balleauprisonnier_mvn;
+package fr.icom.info.m1.balleauprisonnier_mvn.model;
 
 import javafx.animation.*;
 import javafx.beans.property.*;
@@ -6,7 +6,7 @@ import javafx.geometry.*;
 import javafx.scene.image.*;
 import javafx.util.Duration;
 
-class Sprite extends ImageView {
+public class Sprite extends ImageView {
     private final Rectangle2D[] walkClips;
     private final Rectangle2D[] shootClips;
     private int numCells;
@@ -18,7 +18,7 @@ class Sprite extends ImageView {
     private Timeline timeline;
     public boolean isRunning;
 
-     Sprite(Image animationImage, int numCells, int numRows, Duration frameTime, String side) {
+     public Sprite(Image animationImage, int numCells, int numRows, Duration frameTime, String side) {
         this.numCells = numCells;
 
         double cellWidth  = 64;//animationImage.getWidth() / numCells; //64x64
@@ -62,16 +62,17 @@ class Sprite extends ImageView {
         }
 
         shootTimeline = new Timeline(
-                new KeyFrame(frameTime, event -> {
-                    frameCounter.set((frameCounter.get() + 1) % numCellsShoot);
-                    setViewport(shootClips[frameCounter.get()]);
-                }));
+            new KeyFrame(frameTime, event -> {
+                frameCounter.set((frameCounter.get() + 1) % numCellsShoot);
+                setViewport(shootClips[frameCounter.get()]);
+            })
+        );
 
         timeline = walkTimeline;
         isRunning = false;
     }
 
-    void playContinuously() {
+    public void playContinuously() {
         isRunning = true;
         frameCounter.set(0);
         timeline = walkTimeline;
@@ -80,7 +81,7 @@ class Sprite extends ImageView {
         timeline.playFromStart();
     }
 
-     void playShoot(){
+     public void playShoot(){
         frameCounter.set(0);
         timeline.stop();
         timeline = shootTimeline;
@@ -89,7 +90,7 @@ class Sprite extends ImageView {
         timeline.playFromStart();
     }
 
-     void stop() {
+     public void stop() {
         frameCounter.set(0);
         setViewport(walkClips[frameCounter.get()]);
         walkTimeline.stop();

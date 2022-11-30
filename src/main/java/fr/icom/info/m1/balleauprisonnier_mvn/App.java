@@ -1,6 +1,10 @@
 package fr.icom.info.m1.balleauprisonnier_mvn;
 
 
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.MachineController;
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.PlayerController;
+import fr.icom.info.m1.balleauprisonnier_mvn.controller.ProjectileController;
+import fr.icom.info.m1.balleauprisonnier_mvn.view.Field;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -12,7 +16,12 @@ import javafx.stage.Stage;
  */
 public class App extends Application 
 {
-	
+
+	private PlayerController playerController= new PlayerController();
+	private MachineController machineController= new MachineController();
+
+    private ProjectileController projectileController= new ProjectileController();
+
 	/**
 	 * En javafx start() lance l'application
 	 *
@@ -32,12 +41,8 @@ public class App extends Application
         // On cree le terrain de jeu et on l'ajoute a la racine de la scene
         Field gameField = new Field(scene, 600, 600 );
         root.getChildren().add( gameField );
-		root.getChildren().add(gameField.getJoueurs().get(0).sprite);
-		root.getChildren().add(gameField.getMachines().get(0).sprite);
-		root.getChildren().add(gameField.getMachines().get(1).sprite);
-		root.getChildren().add(gameField.getMachines().get(2).sprite);
-		//root.getChildren().add(gameField.getJoueurs().get(1).sprite);
-
+		this.playerController.loadInStage(root, gameField);
+		this.machineController.loadInStage(root, gameField);
         // On ajoute la scene a la fenetre et on affiche
         stage.setScene( scene );
         stage.show();
